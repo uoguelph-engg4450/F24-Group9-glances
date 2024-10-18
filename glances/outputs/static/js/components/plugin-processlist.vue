@@ -162,6 +162,8 @@ export default {
                     process.memory_percent = -1;
                 }
 
+                
+
                 process.io_read = null;
                 process.io_write = null;
 
@@ -185,6 +187,8 @@ export default {
                 if (process.cmdline === null || process.cmdline.length === 0) {
                     process.cmdline = process.name;
                 }
+                
+                
 
                 return process;
             });

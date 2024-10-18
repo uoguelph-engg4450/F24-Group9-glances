@@ -2,6 +2,7 @@
     <div v-if="args.disable_process">PROCESSES DISABLED (press 'z' to display)</div>
     <div v-else>
         <glances-plugin-processcount :sorter="sorter" :data="data"></glances-plugin-processcount>
+        <username-filter></username-filter>
         <div class="row" v-if="!args.disable_amps">
             <div class="col-lg-18">
                 <glances-plugin-amps :data="data"></glances-plugin-amps>
@@ -20,12 +21,14 @@ import { store } from '../store.js';
 import GlancesPluginAmps from './plugin-amps.vue';
 import GlancesPluginProcesscount from './plugin-processcount.vue';
 import GlancesPluginProcesslist from './plugin-processlist.vue';
+import UsernameFilter from './username-filter.vue';
 
 export default {
     components: {
         GlancesPluginAmps,
         GlancesPluginProcesscount,
-        GlancesPluginProcesslist
+        GlancesPluginProcesslist,
+        UsernameFilter
     },
     props: {
         data: {
