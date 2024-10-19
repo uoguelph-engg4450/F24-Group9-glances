@@ -1,21 +1,25 @@
 <template>
     <div id="username-filter-container">
-        <input id="filter-form" v-model="text" type="text" placeholder="Enter a username to filter by ...">
+        <input id="filter-form" type="text" placeholder="Enter a username to filter by ..." @input="$emit('filterApplied', $event.target.value)">
     </div>
 </template>
 
 <script>
 
+    export default {
+        emits: ["filterApplied"]
+    }
+    
 </script>
 
 <style>
 
     #username-filter-container {
-        background-color: #2e2a2a;
+        background-color: transparent;
     }
 
     #filter-form {
-        width: 30%;
+        width: 27%;
     }
 
 </style>

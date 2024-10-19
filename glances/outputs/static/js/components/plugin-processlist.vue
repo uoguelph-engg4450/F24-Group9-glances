@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { orderBy, last } from 'lodash';
+import { orderBy, last} from 'lodash';
 import { timemillis, timedelta } from '../filters.js';
 import { GlancesHelper } from '../services.js';
 import { store } from '../store.js';
@@ -111,6 +111,9 @@ export default {
         },
         sorter: {
             type: Object
+        },
+        usernameFilterStr: {
+            type: String
         }
     },
     data() {
@@ -162,8 +165,6 @@ export default {
                     process.memory_percent = -1;
                 }
 
-                
-
                 process.io_read = null;
                 process.io_write = null;
 
@@ -191,6 +192,10 @@ export default {
                 
 
                 return process;
+            }).filter((process) => {
+                    return this.usernameFilterStr
+                    ? process.username.toLowerCase().includes(this.usernameFilterStr.toLowerCase())
+                    : true;
             });
 
             return orderBy(
@@ -207,6 +212,7 @@ export default {
         ioReadWritePresent() {
             return (this.stats || []).some(({ io_counters }) => io_counters);
         },
+
         limit() {
             return this.config.outputs !== undefined
                 ? this.config.outputs.max_processes_display
@@ -219,7 +225,7 @@ export default {
         },
         getMemoryPercentAlert(process) {
             return GlancesHelper.getAlert('processlist', 'processlist_mem_', process.cpu_percent);
-        }
+        },
     }
 };
 </script>
