@@ -193,9 +193,11 @@ export default {
 
                 return process;
             }).filter((process) => {
-                    return this.usernameFilterStr
-                    ? process.username.toLowerCase().includes(this.usernameFilterStr.toLowerCase())
-                    : true;
+                if (this.usernameFilterStr) {
+                    const regex = new RegExp(this.usernameFilterStr.replace(/\*/g, '.*'), 'i');
+                    return regex.test(process.username);
+                }
+                return true; // No filter applied if filter str is empty
             });
 
             return orderBy(
