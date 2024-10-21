@@ -3,8 +3,8 @@
         <button id="open-filter-menu" @click="openFilterMenu()">Filter by Username</button>
         <div id="filter-menu-container" v-show="filterMenuOpen">
             <div style="display: inline-flex;" id="filter-input-container">
-                <div class="filter-menu" id="filter-label">Username pattern:</div>
-                <input class="filter-menu" id="filter-form" type="text" @input="$emit('filterApplied', $event.target.value)">
+                <div class="filter-menu" id="filter-label">Username or regex pattern:</div>
+                <input class="filter-menu" id="filter-form" placeholder="Enter a user or regex pattern..." type="text" @input="$emit('filterApplied', $event.target.value)">
             </div>
             <button id="close-filter-menu" @click="openFilterMenu()">Exit</button>
         </div>
@@ -45,7 +45,7 @@
 
     #open-filter-menu {
         height: 100%;
-        width: 120px;
+        width: 7.5%;
         background-color: black;
         border-style: solid;
         border-width: 1px;
@@ -55,11 +55,14 @@
 
     #close-filter-menu {
         height: 100%;
-        background-color: black;
-        border: none;
+        background-color: white;
+        border: solid;
+        border-color: #888888;
+        color: black;
         font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
         grid-row: 3;
         margin: 0 auto;
+        justify-content: center;
     }
 
     #filter-menu-container {
@@ -71,16 +74,18 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        height: 200px;
-        width: 400px;
+        height: 20%;
+        width: 30%;
         font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
         display: grid;
-        grid-template-columns: 400px;
-        grid-template-rows: 20px 100px 50px;
+        grid-template-columns: 100%;
+        grid-template-rows: 20% 60% 20%;
     }
 
     .filter-menu {
         background-color: transparent;
+        margin-top: 2.5%;
+        margin-left: 2.5%;
         font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
     }
 
@@ -88,18 +93,20 @@
         height: 100%;
         width: 100%;
         grid-row: 1;
+        margin-left: 2.5%;
+        margin-right: 2.5%;
     }
 
     #filter-label {
         height: 100%;
-        width: 40%;
+        width: 20%;
         border: none;
         background-color: transparent;
     }
 
     #filter-form {
-        width: 60%;
-        background-color: transparent;
+        width: 50%;
+        background-color: white;
         border-style: solid;
         border-color: white;
         border-width: 1px;
