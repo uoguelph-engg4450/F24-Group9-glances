@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { orderBy, last } from 'lodash';
+import { orderBy, last} from 'lodash';
 import { timemillis, timedelta } from '../filters.js';
 import { GlancesHelper } from '../services.js';
 import { store } from '../store.js';
@@ -126,6 +126,9 @@ export default {
         },
         sorter: {
             type: Object
+        },
+        usernameFilterStr: {
+            type: String
         }
     },
     data() {
@@ -200,8 +203,16 @@ export default {
                 if (process.cmdline === null || process.cmdline.length === 0) {
                     process.cmdline = process.name;
                 }
+                
+                
 
                 return process;
+            }).filter((process) => {
+                if (this.usernameFilterStr) {
+                    const regex = new RegExp(this.usernameFilterStr.replace(/\*/g, '.*'), 'i');
+                    return regex.test(process.username);
+                }
+                return true; // No filter applied if filter str is empty
             });
 
             return orderBy(
@@ -218,6 +229,7 @@ export default {
         ioReadWritePresent() {
             return (this.stats || []).some(({ io_counters }) => io_counters);
         },
+
         limit() {
             return this.config.outputs !== undefined
                 ? this.config.outputs.max_processes_display
@@ -230,7 +242,7 @@ export default {
         },
         getMemoryPercentAlert(process) {
             return GlancesHelper.getAlert('processlist', 'processlist_mem_', process.cpu_percent);
-        }
+        },
     }
 };
 </script>

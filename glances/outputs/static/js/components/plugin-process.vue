@@ -2,6 +2,7 @@
     <div v-if="args.disable_process">PROCESSES DISABLED (press 'z' to display)</div>
     <div v-else>
         <glances-plugin-processcount :sorter="sorter" :data="data"></glances-plugin-processcount>
+        <username-filter @filterApplied="testHandler($event)"></username-filter>
         <div class="row" v-if="!args.disable_amps">
             <div class="col-lg-18">
                 <glances-plugin-amps :data="data"></glances-plugin-amps>
@@ -10,6 +11,7 @@
         <glances-plugin-processlist
             :sorter="sorter"
             :data="data"
+            :usernameFilterStr="filterStr"
             @update:sorter="args.sort_processes_key = $event"
         ></glances-plugin-processlist>
     </div>
@@ -20,12 +22,14 @@ import { store } from '../store.js';
 import GlancesPluginAmps from './plugin-amps.vue';
 import GlancesPluginProcesscount from './plugin-processcount.vue';
 import GlancesPluginProcesslist from './plugin-processlist.vue';
+import UsernameFilter from './username-filter.vue';
 
 export default {
     components: {
         GlancesPluginAmps,
         GlancesPluginProcesscount,
-        GlancesPluginProcesslist
+        GlancesPluginProcesslist,
+        UsernameFilter
     },
     props: {
         data: {
@@ -35,7 +39,8 @@ export default {
     data() {
         return {
             store,
-            sorter: undefined
+            sorter: undefined,
+            filterStr: undefined
         };
     },
     computed: {
@@ -84,6 +89,14 @@ export default {
                     };
                 }
             }
+        }
+    },
+
+    methods: {
+        
+        testHandler(filterStr) {
+            console.log(filterStr);
+            this.filterStr = filterStr;
         }
     }
 };
