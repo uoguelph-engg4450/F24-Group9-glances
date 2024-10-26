@@ -90,8 +90,12 @@ class PluginModel(GlancesPluginModel):
 
         #  Add support for automatically hiding network interfaces that are down
         # or that don't have any IP addresses #2799
-        self.hide_no_up = config.get_bool_value(self.plugin_name, 'hide_no_up', default=False)
-        self.hide_no_ip = config.get_bool_value(self.plugin_name, 'hide_no_ip', default=False)
+        if config is not None:
+            self.hide_no_up = config.get_bool_value(self.plugin_name, 'hide_no_up', default=False)
+            self.hide_no_ip = config.get_bool_value(self.plugin_name, 'hide_no_ip', default=False)
+        else:
+            self.hide_no_up = False
+            self.hide_no_ip = False
 
         # Force a first update because we need two updates to have the first stat
         self.update()
@@ -236,7 +240,7 @@ class PluginModel(GlancesPluginModel):
         if max_width:
             name_max_width = max_width - 12
         else:
-            # No max_width defined, return an emptu curse message
+            # No max_width defined, return an empty curse message
             logger.debug(f"No max_width defined for the {self.plugin_name} plugin, it will not be displayed.")
             return ret
 

@@ -12,7 +12,7 @@ from copy import deepcopy
 from functools import partial, reduce
 from typing import Any, Dict, List, Optional, Tuple
 
-from glances.globals import iteritems, itervalues
+from glances.globals import iteritems, itervalues, nativestr
 from glances.logger import logger
 from glances.plugins.containers.engines import ContainersExtension
 from glances.plugins.containers.engines.docker import DockerExtension, import_docker_error_tag
@@ -226,10 +226,16 @@ class PluginModel(GlancesPluginModel):
         # Update stats
         stats = []
         for engine, watcher in iteritems(self.watchers):
-            version, containers = watcher.update(all_tag=self._all_tag())
+            _, containers = watcher.update(all_tag=self._all_tag())
+            containers_filtered = []
             for container in containers:
                 container["engine"] = engine
-            stats.extend(containers)
+                if 'key' in container and container['key'] in container:
+                    if not self.is_hide(nativestr(container[container['key']])):
+                        containers_filtered.append(container)
+                else:
+                    containers_filtered.append(container)
+            stats.extend(containers_filtered)
 
         # Sort and update the stats
         # @TODO: Have a look because sort did not work for the moment (need memory stats ?)
@@ -294,10 +300,11 @@ class PluginModel(GlancesPluginModel):
     def build_title(self, ret):
         msg = '{}'.format('CONTAINERS')
         ret.append(self.curse_add_line(msg, "TITLE"))
-        msg = f' {len(self.stats)}'
-        ret.append(self.curse_add_line(msg))
-        msg = f' sorted by {sort_for_human[self.sort_key]}'
-        ret.append(self.curse_add_line(msg))
+        if len(self.stats) > 1:
+            msg = f' {len(self.stats)}'
+            ret.append(self.curse_add_line(msg))
+            msg = f' sorted by {sort_for_human[self.sort_key]}'
+            ret.append(self.curse_add_line(msg))
         if not self.views['show_engine_name']:
             msg = f' (served by {self.stats[0].get("engine", "")})'
         ret.append(self.curse_add_line(msg))

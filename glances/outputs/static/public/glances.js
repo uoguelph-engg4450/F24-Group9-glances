@@ -11,7 +11,7 @@
  * Copyright (c) 2014-2017, Jon Schlinkert.
  * Released under the MIT License.
  */
-function n(e){return"[object Object]"===Object.prototype.toString.call(e)}Object.defineProperty(t,"__esModule",{value:!0}),t.isPlainObject=function(e){var t,r;return!1!==n(e)&&(void 0===(t=e.constructor)||!1!==n(r=t.prototype)&&!1!==r.hasOwnProperty("isPrototypeOf"))}},2543:function(e,t,n){var r;
+function r(t){return"[object Object]"===Object.prototype.toString.call(t)}Object.defineProperty(e,"__esModule",{value:!0}),e.isPlainObject=function(t){var e,n;return!1!==r(t)&&(void 0===(e=t.constructor)||!1!==r(n=e.prototype)&&!1!==n.hasOwnProperty("isPrototypeOf"))}},2543:function(t,e,r){var n;
 /**
  * @license
  * Lodash <https://lodash.com/>

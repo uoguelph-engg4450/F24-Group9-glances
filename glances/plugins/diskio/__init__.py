@@ -9,7 +9,7 @@
 """Disk I/O plugin."""
 
 import psutil
-
+import time
 from glances.globals import nativestr
 from glances.logger import logger
 from glances.plugins.plugin.model import GlancesPluginModel
@@ -73,9 +73,16 @@ class PluginModel(GlancesPluginModel):
         # Hide stats if it has never been != 0
         if config is not None:
             self.hide_zero = config.get_bool_value(self.plugin_name, 'hide_zero', default=False)
+            self.hide_threshold_bytes = config.get_int_value(self.plugin_name, 'hide_threshold_bytes', default=0)
         else:
             self.hide_zero = False
+            self.hide_threshold_bytes = 0
+
         self.hide_zero_fields = ['read_bytes_rate_per_sec', 'write_bytes_rate_per_sec']
+
+        # Initialize a debounce state dictionary
+        self.debounce_state = {}
+        self.debounce_time = 4  # 4 seconds debounce time
 
         # Force a first update because we need two updates to have the first stat
         self.update()
@@ -114,11 +121,11 @@ class PluginModel(GlancesPluginModel):
             if self.args is not None and not self.args.diskio_show_ramfs and disk_name.startswith('ram'):
                 continue
 
-            # Shall we display the stats ?
+            # Shall we display the stats?
             if not self.is_display(disk_name):
                 continue
 
-            # Filter stats to keep only the fields we want (define in fields_description)
+            # Filter stats to keep only the fields we want (defined in fields_description)
             # It will also convert psutil objects to a standard Python dict
             stat = self.filter_stats(disk_stat)
 
@@ -128,7 +135,7 @@ class PluginModel(GlancesPluginModel):
             # Add disk name
             stat['disk_name'] = disk_name
 
-            # Add alias if exist (define in the configuration file)
+            # Add alias if exist (defined in the configuration file)
             if self.has_alias(disk_name) is not None:
                 stat['alias'] = self.has_alias(disk_name)
 
@@ -145,6 +152,23 @@ class PluginModel(GlancesPluginModel):
         # Alert
         for i in self.get_raw():
             disk_real_name = i['disk_name']
+
+            # Hide stats based on the hide_threshold_bytes
+            read_bytes = i.get('read_bytes_rate_per_sec', 0)  # Default to 0 if not present
+            write_bytes = i.get('write_bytes_rate_per_sec', 0)  # Default to 0 if not present
+
+            if self.hide_threshold_bytes > 0:
+                if read_bytes < self.hide_threshold_bytes or write_bytes < self.hide_threshold_bytes:
+                    # Check debounce
+                    current_time = time.time()
+                    last_active_time = self.debounce_state.get(disk_real_name, 0)
+                    if current_time - last_active_time >= self.debounce_time:
+                        # Hide this disk since one of the rates is below the threshold
+                        continue
+                else:
+                    # Update the last active time
+                    self.debounce_state[disk_real_name] = time.time()
+
             self.views[i[self.get_key()]]['read_bytes']['decoration'] = self.get_alert(
                 i['read_bytes'], header=disk_real_name + '_rx'
             )
@@ -157,7 +181,7 @@ class PluginModel(GlancesPluginModel):
         # Init the return message
         ret = []
 
-        # Only process if stats exist and display plugin enable...
+        # Only process if stats exist and display plugin enabled...
         if not self.stats or self.is_disabled():
             return ret
 
@@ -165,7 +189,7 @@ class PluginModel(GlancesPluginModel):
         if max_width:
             name_max_width = max_width - 13
         else:
-            # No max_width defined, return an emptu curse message
+            # No max_width defined, return an empty curse message
             logger.debug(f"No max_width defined for the {self.plugin_name} plugin, it will not be displayed.")
             return ret
 
@@ -182,12 +206,22 @@ class PluginModel(GlancesPluginModel):
             ret.append(self.curse_add_line(msg))
             msg = '{:>7}'.format('W/s')
             ret.append(self.curse_add_line(msg))
+
         # Disk list (sorted by name)
         for i in self.sorted_stats():
-            # Hide stats if never be different from 0 (issue #1787)
-            if all(self.get_views(item=i[self.get_key()], key=f, option='hidden') for f in self.hide_zero_fields):
-                continue
-            # Is there an alias for the disk name ?
+            # Hide stats if they have never been different from 0 or are below the threshold
+            read_bytes = i.get('read_bytes_rate_per_sec', 0)  # Default to 0 if not present
+            write_bytes = i.get('write_bytes_rate_per_sec', 0)  # Default to 0 if not present
+
+            if self.hide_threshold_bytes > 0 and (read_bytes < self.hide_threshold_bytes or write_bytes < self.hide_threshold_bytes):
+                # Check debounce
+                current_time = time.time()
+                last_active_time = self.debounce_state.get(i['disk_name'], 0)
+                if current_time - last_active_time >= self.debounce_time:
+                    # Hide this disk since one of the rates is below the threshold
+                    continue
+
+            # Is there an alias for the disk name?
             disk_name = i['alias'] if 'alias' in i else i['disk_name']
             # New line
             ret.append(self.curse_new_line())
