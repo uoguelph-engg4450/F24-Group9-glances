@@ -1,6 +1,6 @@
 <template>
     <section class="plugin" id="sensors" v-if="hasSensors">
-        <table class="table table-sm table-borderless">
+        <table class="table table-sm table-borderless margin-bottom">
             <thead>
                 <tr>
                     <th scope="col">SENSORS</th>
