@@ -1,0 +1,6 @@
+MODIFICATION REQUIREMENTS
+
+App.vue - Main container for web ui VueJS app.
+
+- 
+

@@ -12,6 +12,7 @@ import os
 import sys
 import tempfile
 import webbrowser
+from typing import Any
 from urllib.parse import urljoin
 
 from glances.stats import GlancesStats
