@@ -1,6 +1,22 @@
 MODIFICATION REQUIREMENTS
 
 App.vue - Main container for web ui VueJS app.
+- Add import for GlancesPluginUsers on line 140
+- Add GlancesPluginUsers in components object, line 144
 
-- 
+Components directory
+- Create plugin-users.vue
+    - Copy code from plugin-sensors.vue
+
+uiconfig.json
+- Add 'users' in 'leftMenu' list to enable loading of users plugin in leftMenu container
+
+plugin-users.vue
+- Get users object from store
+- Create UI to display the following items
+    User    status      CPU Usage   Active Processes
+    liam    logged in   20%         42
+
+    -- User v-for to loop through list of users and their stats
+
 

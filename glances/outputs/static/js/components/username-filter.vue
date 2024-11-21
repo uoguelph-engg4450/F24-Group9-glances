@@ -105,10 +105,11 @@
     }
 
     #filter-form {
+        color: #000000;
         width: 50%;
-        background-color: white;
+        background-color: rgb(255, 255, 255);
         border-style: solid;
-        border-color: white;
+        border-color: rgb(255, 255, 255);
         border-width: 1px;
     }
 
