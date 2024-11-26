@@ -120,6 +120,7 @@ class _GlancesCurses:
         'smart',
         'sensors',
         'now',
+        'usermonitor' #Display User Monitor Data in CMD Interface
     ]
     _left_sidebar_min_width = 23
     _left_sidebar_max_width = 34
