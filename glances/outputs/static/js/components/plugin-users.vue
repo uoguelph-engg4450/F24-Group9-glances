@@ -3,9 +3,9 @@
         <table class="table table-sm table-borderless">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 36%">USERS</th>
-                    <th scope="col" class="text-end" style="width: 32%">Processes</th>
-                    <th scope="col" class="text-end" style="width: 32%">CPU Usage (%)</th>
+                    <th scope="col" style="width: 30%">USERS</th>
+                    <th scope="col" class="text-end" style="width: 20%">Processes</th>
+                    <th scope="col" class="text-end" style="width: 50%">Total CPU Usage (%)</th>
                 </tr>
             </thead>
             <tbody>
@@ -13,7 +13,6 @@
                     <td scope="row">{{ user.name }}</td>
                     <td class="text-end w-25">{{ user.num_processes }}</td>
                     <td class="text-end w-25">{{ user.cpu_usage }} %</td>
-
                 </tr>
             </tbody>
         </table>
@@ -46,8 +45,11 @@ export default {
         },
         user_summary() {
             const allUsers = (this.processes || []).map((process) => process.username);
-
             const usernames = [...new Set(allUsers)]; // Convert Set to an array
+            const num_cpu_cores = this.data.stats['core'].log;
+
+            console.log(this.data.stats);
+            
 
             let summary = [];
 
@@ -62,11 +64,14 @@ export default {
                     }
                 }
 
-                summary.push({
-                    name: usernames[i],
-                    num_processes: num_processes,
-                    cpu_usage: cpu_usage.toFixed(2),
-                });
+                cpu_usage = cpu_usage/num_cpu_cores;
+                if(cpu_usage > 0.009) {
+                    summary.push({
+                        name: usernames[i],
+                        num_processes: num_processes,
+                        cpu_usage: cpu_usage.toFixed(2),
+                    });
+                }
             }
             return summary;
         }

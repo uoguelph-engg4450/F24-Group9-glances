@@ -100,7 +100,7 @@
                     ></glances-plugin-alert>
                 </div>
             </div>
-        </div>CPU Usage
+        </div>
     </main>
 </template>
 

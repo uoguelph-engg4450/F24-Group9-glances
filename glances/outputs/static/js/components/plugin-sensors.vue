@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import { GlancesHelper } from '../services.js';
 import { store } from '../store.js';
 
 export default {
