@@ -118,7 +118,6 @@ import { orderBy, last} from 'lodash';
 import { timemillis, timedelta } from '../filters.js';
 import { GlancesHelper } from '../services.js';
 import { store } from '../store.js';
-import {computed} from 'vue'
 
 export default {
     props: {
