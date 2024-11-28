@@ -137,6 +137,7 @@ import GlancesPluginSystem from './components/plugin-system.vue';
 import GlancesPluginUptime from './components/plugin-uptime.vue';
 import GlancesPluginVms from './components/plugin-vms.vue';
 import GlancesPluginWifi from './components/plugin-wifi.vue';
+import GlancesPluginUsers from './components/plugin-users.vue'
 
 import uiconfig from './uiconfig.json';
 
@@ -169,7 +170,8 @@ export default {
         GlancesPluginSystem,
         GlancesPluginUptime,
         GlancesPluginVms,
-        GlancesPluginWifi
+        GlancesPluginWifi,
+        GlancesPluginUsers
     },
     data() {
         return {

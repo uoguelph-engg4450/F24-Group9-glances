@@ -1,4 +1,4 @@
-# 
+#
 #
 # This is the new plugin created to implement feature request #1766.
 #
@@ -7,18 +7,21 @@
 #
 
 """Active Users/User Monitoring Plugin."""
-import logging
+
 import datetime
+import logging
+
 import psutil
+
 from glances.plugins.plugin.model import GlancesPluginModel
 
 # Global variable definition for Field Description
 fields_description = {
     'name': {
         'description': 'User Name',  # Human-readable name for the field
-        'align': 'left',            # Text alignment in the curses UI 
-        'color': 'WHITE',           # Color for the field text
-        'type': 'str',              # Type of data 
+        'align': 'left',  # Text alignment in the curses UI
+        'color': 'WHITE',  # Color for the field text
+        'type': 'str',  # Type of data
     },
     'started': {
         'description': 'Started At',
@@ -49,6 +52,7 @@ class PluginModel(GlancesPluginModel):
     Inherits from GlancesPlugin and implements the required methods
     for updating and managing data.
     """
+
     def __init__(self, args=None, config=None):
         """
         Initialize the MyPlugin class with default values or configurations.
@@ -58,9 +62,8 @@ class PluginModel(GlancesPluginModel):
         self.logger = getattr(self, 'logger', logging.getLogger(__name__))
         self.data = []
 
-        #We want to display the stat in the curse interface
+        # We want to display the stat in the curse interface
         self.display_curse = True
-
 
     @GlancesPluginModel._check_decorator
     @GlancesPluginModel._log_result_decorator
@@ -89,6 +92,10 @@ class PluginModel(GlancesPluginModel):
             self.data = [
                 {
                     'name': user.name,
+<<<<<<< HEAD
+=======
+                    'terminal': user.terminal,
+>>>>>>> f8d7bd65d0fc6f666e580df4aa679403d8e8de4a
                     'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d %H:%M:%S'),
                     'cpu': user_stats[user.name]['cpu'],
                     'memory': user_stats[user.name]['memory'],
@@ -112,9 +119,16 @@ class PluginModel(GlancesPluginModel):
                 'cpu': {'decoration': self.get_alert(user['cpu'], header='cpu')},
                 'memory': {'decoration': self.get_alert(user['memory'], header='memory')},
             }
+<<<<<<< HEAD
     def msg_curse(self, args=None, max_width=None):
         """Return the string to display in the curse interface."""
         ret = []  # Initializing
+=======
+
+    def msg_curse(self, args=None, max_width=None):
+        """Return the string to display in the curse interface."""
+        ret = []  # nitializing
+>>>>>>> f8d7bd65d0fc6f666e580df4aa679403d8e8de4a
 
         # if no data or plugin disabled, return the empty list
         if not self.data or self.is_disabled():
@@ -131,8 +145,7 @@ class PluginModel(GlancesPluginModel):
             )
             # if max_width provided, truncate line to fit screen width
             if max_width and len(user_info) > max_width:
-                user_info = user_info[:max_width - 3] + "..."
+                user_info = user_info[: max_width - 3] + "..."
             ret.append(self.curse_add_line(user_info))
 
         return ret
-    
