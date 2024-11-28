@@ -92,10 +92,6 @@ class PluginModel(GlancesPluginModel):
             self.data = [
                 {
                     'name': user.name,
-<<<<<<< HEAD
-=======
-                    'terminal': user.terminal,
->>>>>>> f8d7bd65d0fc6f666e580df4aa679403d8e8de4a
                     'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d %H:%M:%S'),
                     'cpu': user_stats[user.name]['cpu'],
                     'memory': user_stats[user.name]['memory'],
@@ -119,16 +115,9 @@ class PluginModel(GlancesPluginModel):
                 'cpu': {'decoration': self.get_alert(user['cpu'], header='cpu')},
                 'memory': {'decoration': self.get_alert(user['memory'], header='memory')},
             }
-<<<<<<< HEAD
     def msg_curse(self, args=None, max_width=None):
         """Return the string to display in the curse interface."""
         ret = []  # Initializing
-=======
-
-    def msg_curse(self, args=None, max_width=None):
-        """Return the string to display in the curse interface."""
-        ret = []  # nitializing
->>>>>>> f8d7bd65d0fc6f666e580df4aa679403d8e8de4a
 
         # if no data or plugin disabled, return the empty list
         if not self.data or self.is_disabled():
