@@ -119,8 +119,8 @@ class _GlancesCurses:
         'raid',
         'smart',
         'sensors',
-        'now',
-        'usermonitor' #Display User Monitor Data in CMD Interface
+        'usermonitor', #Display User Monitor Data in CMD Interface
+        'now'
     ]
     _left_sidebar_min_width = 23
     _left_sidebar_max_width = 34
