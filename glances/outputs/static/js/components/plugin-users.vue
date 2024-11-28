@@ -4,7 +4,7 @@
             <thead>
                 <tr>
                     <th scope="col" style="width: 25%">ACTIVE USERS</th>
-                    <th scope="col" class="text-end" style="width: 25%">Sesion Start</th>
+                    <th scope="col" class="text-end" style="width: 25%">Session Start</th>
                     <th scope="col" class="text-end" style="width: 25%">CPU usg</th>
                     <th scope="col" class="text-end" style="width: 25%">Mem usg</th>
                 </tr>
