@@ -98,8 +98,12 @@ class PluginModel(GlancesPluginModel):
                 }
                 for user in self.active_users
             ]
+
+            self.stats = self.data
             self.logger.debug(f"Collected active users: {self.data}")
-            return self.data
+            # return self.data
+            return self.stats
+
         except Exception as e:
             self.logger.debug(f"Failed to update usermonitor Plugin: {e}")
             return None
@@ -115,6 +119,7 @@ class PluginModel(GlancesPluginModel):
                 'cpu': {'decoration': self.get_alert(user['cpu'], header='cpu')},
                 'memory': {'decoration': self.get_alert(user['memory'], header='memory')},
             }
+
     def msg_curse(self, args=None, max_width=None):
         """Return the string to display in the curse interface."""
         ret = []  # Initializing
@@ -128,10 +133,7 @@ class PluginModel(GlancesPluginModel):
 
         # loop through collected user data and format user details
         for user in self.data:
-            user_info = (
-                f"{user['name']:10}{user['started']:20}"
-                f"CPU: {user['cpu']:6.2f}% Mem: {user['memory']:6.2f}%"
-            )
+            user_info = f"{user['name']:10}{user['started']:20}" f"CPU: {user['cpu']:6.2f}% Mem: {user['memory']:6.2f}%"
             # if max_width provided, truncate line to fit screen width
             if max_width and len(user_info) > max_width:
                 user_info = user_info[: max_width - 3] + "..."
