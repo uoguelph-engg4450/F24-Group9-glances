@@ -1,7 +1,6 @@
 import logging
 from glances.plugins.usermonitor import PluginModel  
 
-# Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def test_plugin():
@@ -20,7 +19,12 @@ def test_plugin():
     if data:
         print("Active Users:")
         for user in data:
-            print(f"Name: {user['name']}, Terminal: {user['terminal']}, Started: {user['started']}")
+            print(
+                f"Name: {user['name']}, "
+                f"Started: {user['started']}, "
+                f"CPU: {user['cpu']:.2f}%, "
+                f"Memory: {user['memory']:.2f}%"
+            )
     else:
         print("No active users or an error occurred.")
 
