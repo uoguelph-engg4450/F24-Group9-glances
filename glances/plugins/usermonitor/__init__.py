@@ -1,4 +1,4 @@
-# 
+#
 #
 # This is the new plugin created to implement feature request #1766.
 #
@@ -7,18 +7,21 @@
 #
 
 """Active Users/User Monitoring Plugin."""
-import logging
+
 import datetime
+import logging
+
 import psutil
+
 from glances.plugins.plugin.model import GlancesPluginModel
 
-#Global variable definition for Field Description
+# Global variable definition for Field Description
 fields_description = {
     'username': {
         'description': 'User Name',  # Human-readable name for the field
-        'align': 'left',            # Text alignment in the curses UI 
-        'color': 'WHITE',           # Color for the field text
-        'type': 'str',              # Type of data 
+        'align': 'left',  # Text alignment in the curses UI
+        'color': 'WHITE',  # Color for the field text
+        'type': 'str',  # Type of data
     },
     'terminal': {
         'description': 'Terminal',
@@ -43,6 +46,7 @@ class PluginModel(GlancesPluginModel):
     Inherits from GlancesPlugin and implements the required methods
     for updating and managing data.
     """
+
     def __init__(self, args=None, config=None):
         """
         Initialize the MyPlugin class with default values or configurations.
@@ -52,9 +56,8 @@ class PluginModel(GlancesPluginModel):
         self.logger = getattr(self, 'logger', logging.getLogger(__name__))
         self.data = []
 
-        #We want to display the stat in the curse interface
+        # We want to display the stat in the curse interface
         self.display_curse = True
-
 
     @GlancesPluginModel._check_decorator
     @GlancesPluginModel._log_result_decorator
@@ -66,14 +69,28 @@ class PluginModel(GlancesPluginModel):
         of the plugin. Called periodically by Glances.
         """
         try:
-            #Collect active users using psutil
             self.active_users = psutil.users()
+            user_stats = {}
+
+            for user in self.active_users:
+                if user.name not in user_stats:
+                    user_stats[user.name] = {'cpu': 0.0, 'memory': 0.0}
+
+            # Collect CPU and memory usage by user
+            for proc in psutil.process_iter(['username', 'cpu_percent', 'memory_percent']):
+                username = proc.info['username']
+                if username in user_stats:
+                    user_stats[username]['cpu'] += proc.info['cpu_percent']
+                    user_stats[username]['memory'] += proc.info['memory_percent']
+
             self.data = [
                 {
-                    'name': user.name, 
-                    'terminal': user.terminal, 
-                    'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d %H:%M:%S')
-                } 
+                    'name': user.name,
+                    'terminal': user.terminal,
+                    'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d %H:%M:%S'),
+                    'cpu': user_stats[user.name]['cpu'],
+                    'memory': user_stats[user.name]['memory'],
+                }
                 for user in self.active_users
             ]
             self.logger.debug(f"Collected active users: {self.data}")
@@ -81,10 +98,22 @@ class PluginModel(GlancesPluginModel):
         except Exception as e:
             self.logger.debug(f"Failed to update usermonitor Plugin: {e}")
             return None
-        
+
+    def update_views(self):
+        """Update stats views."""
+
+        super().update_views()
+
+        for user in self.data:
+            user_key = user['name']
+            self.views[user_key] = {
+                'cpu': {'decoration': self.get_alert(user['cpu'], header='cpu')},
+                'memory': {'decoration': self.get_alert(user['memory'], header='memory')},
+            }
+
     def msg_curse(self, args=None, max_width=None):
         """Return the string to display in the curse interface."""
-        ret = [] # nitializing
+        ret = []  # nitializing
 
         # if no data or plugin disabled, return the empty list
         if not self.data or self.is_disabled():
@@ -98,8 +127,7 @@ class PluginModel(GlancesPluginModel):
             user_info = f"{user['name']:10} {user['terminal'] or 'N/A':10} {user['started']}"
             # if max_width provided, truncate line to fit screen width
             if max_width and len(user_info) > max_width:
-                user_info = user_info[:max_width - 3] + "..."
+                user_info = user_info[: max_width - 3] + "..."
             ret.append(self.curse_add_line(user_info))
 
         return ret
-    
