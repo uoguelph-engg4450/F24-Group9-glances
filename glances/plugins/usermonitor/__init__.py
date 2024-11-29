@@ -92,7 +92,7 @@ class PluginModel(GlancesPluginModel):
             self.data = [
                 {
                     'name': user.name,
-                    'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d %H:%M:%S'),
+                    'started': datetime.datetime.fromtimestamp(user.started).strftime('%Y-%m-%d'),
                     'cpu': user_stats[user.name]['cpu'],
                     'memory': user_stats[user.name]['memory'],
                 }
@@ -112,7 +112,6 @@ class PluginModel(GlancesPluginModel):
         """Update stats views."""
 
         super().update_views()
-
         for user in self.data:
             user_key = user['name']
             self.views[user_key] = {
@@ -121,22 +120,56 @@ class PluginModel(GlancesPluginModel):
             }
 
     def msg_curse(self, args=None, max_width=None):
-        """Return the string to display in the curse interface."""
-        ret = []  # Initializing
+        """Return the dict to display in the curse interface."""
+        # Initialize the return list
+        ret = []
 
-        # if no data or plugin disabled, return the empty list
+        # Only process if data exists and the plugin is enabled
         if not self.data or self.is_disabled():
             return ret
 
-        # title line
-        ret.append(self.curse_add_line("Active Users", "TITLE"))
+        # Define consistent column widths
+        name_max_width = 10
+        started_width = 10  # Width for the 'Started' column
+        cpu_width = 7       # Width for the 'CPU %' column
+        mem_width = 6       # Width for the 'Mem %' column
 
-        # loop through collected user data and format user details
+        # Header
+        header = (
+            f"{'ACTIVE':<{name_max_width}} "
+            f"{'STARTED':<{started_width}} "
+            f"{'CPU %':>{cpu_width}} "
+            f"{'MEM %':>{mem_width}}"
+        )
+        ret.append(self.curse_add_line(header, "TITLE"))
+
+        # Stats
         for user in self.data:
-            user_info = f"{user['name']:10}{user['started']:20}" f"CPU: {user['cpu']:6.2f}% Mem: {user['memory']:6.2f}%"
-            # if max_width provided, truncate line to fit screen width
-            if max_width and len(user_info) > max_width:
-                user_info = user_info[: max_width - 3] + "..."
-            ret.append(self.curse_add_line(user_info))
+            ret.append(self.curse_new_line())
+            try:
+                # Format each row
+                user_row = (
+                    f"{user['name'][:name_max_width]:<{name_max_width}} "  # Username
+                    f"{user['started']:<{started_width}} "               # Start time
+                    f"{user['cpu']:>{cpu_width}.2f} "                    # CPU %
+                    f"{user['memory']:>{mem_width}.2f}"                  # Mem %
+                )
+                # Append the formatted row to the result
+                ret.append(self.curse_add_line(user_row))
+            except KeyError as e:
+                self.logger.error(f"Missing key in user data: {e}")
+                continue
+            except (TypeError, ValueError) as e:
+                self.logger.error(f"Error formatting user data: {e}")
+                continue
+
+        # Add a blank line at the end for better formatting
+        ret.append(self.curse_new_line())
 
         return ret
+
+
+
+
+
+

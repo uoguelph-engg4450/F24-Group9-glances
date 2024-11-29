@@ -4,9 +4,9 @@
             <thead>
                 <tr>
                     <th scope="col" style="width: 25%">ACTIVE USERS</th>
-                    <th scope="col" class="text-end" style="width: 25%">Session Start</th>
-                    <th scope="col" class="text-end" style="width: 25%">CPU usg</th>
-                    <th scope="col" class="text-end" style="width: 25%">Mem usg</th>
+                    <th scope="col" class="text-end" style="width: 25%">Start</th>
+                    <th scope="col" class="text-end" style="width: 25%">CPU %</th>
+                    <th scope="col" class="text-end" style="width: 25%">Mem %</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,18 +26,6 @@
 import { store } from '../store.js';
 
 export default {
-    props: {
-        data: {
-            type: Object
-        },
-        sorter: {
-            type: Object
-        },
-        usernameFilterStr: {
-            type: String,
-            required: false
-        }
-    },
     data() {
         return store;
     },
