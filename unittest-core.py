@@ -578,6 +578,19 @@ class TestGlances(unittest.TestCase):
         self.assertEqual(pretty_date(datetime(2023, 1, 1, 0, 0), datetime(2024, 1, 1, 12, 0)), '1 year')
         self.assertEqual(pretty_date(datetime(2020, 1, 1, 0, 0), datetime(2024, 1, 1, 12, 0)), '4 years')
 
+    def test_022_usermonitor(self):
+        print('INFO: [TEST_022] User Monitor')
+        user_field_names = ['name', 'started', 'cpu', 'memory']
+        stats_grab = stats.get_plugin('usermonitor').get_raw()
+        
+        self.assertTrue(isinstance(stats_grab, list), msg='User monitor stats is not a list')
+        self.assertTrue(len(stats_grab) > 0, msg="No users appear in list")
+        keys = list(stats_grab[0].keys())
+        self.assertTrue(len(keys) <= 4, msg="Too few keys in user stats")
+        for field in user_field_names:
+            self.assertTrue(field in keys, msg=f"{field} field not found in stats")
+        print(f'INFO: User monitoring stats: {stats_grab}')
+
     def test_094_thresholds(self):
         """Test thresholds classes"""
         print('INFO: [TEST_094] Thresholds')

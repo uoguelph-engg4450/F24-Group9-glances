@@ -99,6 +99,7 @@ class TestGlances(unittest.TestCase):
             if p in ('uptime', 'version', 'psutilversion'):
                 self.assertIsInstance(req.json(), text_type)
             elif p in (
+                'usermonitor',
                 'fs',
                 'percpu',
                 'sensors',
@@ -117,7 +118,7 @@ class TestGlances(unittest.TestCase):
                 'containers',
                 'vms',
             ):
-                self.assertIsInstance(req.json(), list)
+                self.assertIsInstance(req.json(), list, f"Failed plugin {p}")
                 if len(req.json()) > 0:
                     self.assertIsInstance(req.json()[0], dict)
             else:
